@@ -230,6 +230,7 @@
                 ["TahomaBold"] = Font.new(ProggyTiny, Enum.FontWeight.Regular, Enum.FontStyle.Normal);
                 ["ProggyClean"] = Font.new(ProggyClean, Enum.FontWeight.Regular, Enum.FontStyle.Normal);
             }
+            library.fonts = fonts
         end
     --
 -- 
@@ -2489,6 +2490,22 @@
                 section:button({name = "Delete", callback = function() delfile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg")  library:update_config_list() end})
 
                 local section = main:column({}):section({name = "Other", size = 1, default = true})
+                section:list({
+                    name = "Menu Font",
+                    items = {"ProggyClean", "TahomaBold"},
+                    default = "ProggyClean",
+                    flag = "MenuFont",
+                    callback = function(val)
+                        local targetFont = library.fonts and library.fonts[val]
+                        if targetFont and library.gui then
+                            for _, v in ipairs(library.gui:GetDescendants()) do
+                                if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
+                                    v.FontFace = targetFont
+                                end
+                            end
+                        end
+                    end
+                })
                 section:keybind({name = "Menu bind", callback = function(bool) window.toggle_menu(bool) end, default = true})
                 section:colorpicker({name = "Gradient 1", callback = function(color)                    
                     library:update_theme("1", color)
