@@ -960,7 +960,7 @@
                 for _, label in ipairs(keybind_labels) do
                     label:Destroy()
                 end
-                table.clear(keybind_labels)
+                keybind_labels = {}
 
                 -- Create new labels for active keybinds
                 for name, data in pairs(library.active_keybinds) do
