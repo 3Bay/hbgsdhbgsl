@@ -828,7 +828,7 @@
                 Parent = library.sgui,
                 Position = dim2(0, 50, 0, 100), 
                 BorderColor3 = rgb(0, 0, 0),
-                Size = dim2(0, 150, 0, 24),
+                Size = dim2(0, 225, 0, 24),
                 BorderSizePixel = 0,
                 AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = rgb(255, 255, 255),
@@ -2497,7 +2497,7 @@
                         text.Text = " ".. __text .." "
 
                         if library.keybinds_ui then
-                            if cfg.active and cfg.mode ~= "Always" then
+                            if cfg.active and cfg.mode ~= "Always" and __text ~= "..." and __text ~= nil then
                                 local state_text = __text and ("[" .. __text .. "] ") or ""
                                 library.keybinds_ui.add_bind(cfg.flag, state_text .. cfg.name, string.lower(cfg.mode))
                             else
