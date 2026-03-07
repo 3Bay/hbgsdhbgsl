@@ -828,9 +828,9 @@
                 Parent = library.sgui,
                 Position = dim2(0, 50, 0, 100), 
                 BorderColor3 = rgb(0, 0, 0),
-                Size = dim2(0, 225, 0, 24),
+                Size = dim2(0, 150, 0, 24),
                 BorderSizePixel = 0,
-                AutomaticSize = Enum.AutomaticSize.Y,
+                AutomaticSize = Enum.AutomaticSize.XY,
                 BackgroundColor3 = rgb(255, 255, 255),
                 Visible = false
             })
@@ -889,7 +889,7 @@
             local list_container = library:create("Frame", {
                 Parent = dark,
                 BackgroundTransparency = 1,
-                Size = dim2(1, 0, 1, -18),
+                Size = dim2(0, 0, 1, -18),
                 Position = dim2(0, 0, 0, 18),
                 BorderSizePixel = 0,
                 AutomaticSize = Enum.AutomaticSize.XY
@@ -931,7 +931,7 @@
                         BorderColor3 = rgb(0, 0, 0),
                         Text = text .. ": " .. state,
                         Parent = list_container,
-                        Size = dim2(1, 0, 0, 12),
+                        Size = dim2(0, 0, 0, 12),
                         BackgroundTransparency = 1,
                         TextXAlignment = Enum.TextXAlignment.Left,
                         BorderSizePixel = 0,
@@ -2631,7 +2631,7 @@
                 local textbox;
                 local main = window:tab({name = "configs"})
                 local section = main:column({}):section({name = "Settings", size = 1, default = true})
-                config_holder = section:dropdown({name = "Configs", items = {"Report", "This", "Error", "To", "Finobe"}, callback = function(option) if textbox then textbox.set(option) end end, flag = "config_name_list"}); library:update_config_list()
+                config_holder = section:dropdown({name = "Configs", items = {"Sugondees", "This", "Error", "To", "Finobe"}, callback = function(option) if textbox then textbox.set(option) end end, flag = "config_name_list"}); library:update_config_list()
                 textbox = section:textbox({name = "Config name:", flag = "config_name_text"})
                 section:button({name = "Save", callback = function() writefile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg", library:get_config()) library:update_config_list() end}) 
                 section:button({name = "Load", callback = function() library:load_config(readfile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg"))  library:update_config_list() end})
