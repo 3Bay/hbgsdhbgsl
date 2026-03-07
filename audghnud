@@ -828,7 +828,7 @@
                 Parent = library.sgui,
                 Position = dim2(0, 50, 0, 100), 
                 BorderColor3 = rgb(0, 0, 0),
-                Size = dim2(0, 225, 0, 24),
+                Size = dim2(0, 150, 0, 24),
                 BorderSizePixel = 0,
                 AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = rgb(255, 255, 255),
@@ -892,7 +892,7 @@
                 Size = dim2(1, 0, 1, -18),
                 Position = dim2(0, 0, 0, 18),
                 BorderSizePixel = 0,
-                AutomaticSize = Enum.AutomaticSize.XY
+                AutomaticSize = Enum.AutomaticSize.Y
             })
             
             library:create("UIListLayout", {
@@ -923,6 +923,21 @@
                 outline.Visible = bool
             end
 
+            
+            local function update_outline_width()
+                local max_width = 80 -- base minimum width
+                local text_service = game:GetService("TextService")
+                for _, bind_label in pairs(cfg.binds) do
+                    local bounds = text_service:GetTextSize(bind_label.Text, 12, fonts["ProggyClean"], Vector2.new(1000, 12))
+                    if bounds.X > max_width then
+                        max_width = bounds.X
+                    end
+                end
+                
+                -- Add some padding (left padding + right padding + extra space)
+                outline.Size = dim2(0, max_width + 16, 0, outline.Size.Y.Offset)
+            end
+
             function cfg.add_bind(id, text, state)
                 if not cfg.binds[id] then
                     local bind_label = library:create("TextLabel", {
@@ -935,7 +950,6 @@
                         BackgroundTransparency = 1,
                         TextXAlignment = Enum.TextXAlignment.Left,
                         BorderSizePixel = 0,
-                        AutomaticSize = Enum.AutomaticSize.X,
                         TextSize = 12,
                         BackgroundColor3 = rgb(255, 255, 255)
                     })
@@ -943,12 +957,14 @@
                 else
                     cfg.binds[id].Text = text .. ": " .. state
                 end
+                update_outline_width()
             end
 
             function cfg.remove_bind(id)
                 if cfg.binds[id] then
                     cfg.binds[id]:Destroy()
                     cfg.binds[id] = nil
+                    update_outline_width()
                 end
             end
 
@@ -2631,7 +2647,7 @@
                 local textbox;
                 local main = window:tab({name = "configs"})
                 local section = main:column({}):section({name = "Settings", size = 1, default = true})
-                config_holder = section:dropdown({name = "Configs", items = {"Report", "This", "Error", "To", "Finobe"}, callback = function(option) if textbox then textbox.set(option) end end, flag = "config_name_list"}); library:update_config_list()
+                config_holder = section:dropdown({name = "Configs", items = {"Sugondees", "This", "Error", "To", "Finobe"}, callback = function(option) if textbox then textbox.set(option) end end, flag = "config_name_list"}); library:update_config_list()
                 textbox = section:textbox({name = "Config name:", flag = "config_name_text"})
                 section:button({name = "Save", callback = function() writefile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg", library:get_config()) library:update_config_list() end}) 
                 section:button({name = "Load", callback = function() library:load_config(readfile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg"))  library:update_config_list() end})
