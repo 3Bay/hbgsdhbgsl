@@ -2485,7 +2485,7 @@
 
             function library:init_config(window) 
                 local textbox;
-                local main = window:tab({name = "Configs"})
+                local main = window:tab({name = "configs"})
                 local section = main:column({}):section({name = "Settings", size = 1, default = true})
                 config_holder = section:dropdown({name = "Configs", items = {"Report", "This", "Error", "To", "Finobe"}, callback = function(option) if textbox then textbox.set(option) end end, flag = "config_name_list"}); library:update_config_list()
                 textbox = section:textbox({name = "Config name:", flag = "config_name_text"})
