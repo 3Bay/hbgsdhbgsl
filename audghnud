@@ -1582,7 +1582,7 @@
                             end
                         end
 
-                        text.Text = if isTable then concat(selected, ", ") else selected[1]
+                        text.Text = if isTable then concat(selected, ", ") else (selected[1] or "")
 
                         flags[cfg.flag] = if isTable then selected else selected[1]
                         
@@ -2487,7 +2487,7 @@
                 local textbox;
                 local main = window:tab({name = "Configs"})
                 local section = main:column({}):section({name = "Settings", size = 1, default = true})
-                config_holder = section:dropdown({name = "Configs", options = {"Report", "This", "Error", "To", "Finobe"}, callback = function(option) if textbox then textbox.set(option) end end, flag = "config_name_list"}); library:update_config_list()
+                config_holder = section:dropdown({name = "Configs", items = {"Report", "This", "Error", "To", "Finobe"}, callback = function(option) if textbox then textbox.set(option) end end, flag = "config_name_list"}); library:update_config_list()
                 textbox = section:textbox({name = "Config name:", flag = "config_name_text"})
                 section:button({name = "Save", callback = function() writefile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg", library:get_config()) library:update_config_list() end}) 
                 section:button({name = "Load", callback = function() library:load_config(readfile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg"))  library:update_config_list() end})
