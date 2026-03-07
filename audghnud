@@ -926,9 +926,17 @@
             
             local function update_outline_width()
                 local max_width = 80 -- base minimum width
-                local text_service = game:GetService("TextService")
                 for _, bind_label in pairs(cfg.binds) do
-                    local bounds = text_service:GetTextSize(bind_label.Text, 12, fonts["ProggyClean"], Vector2.new(1000, 12))
+                    local font = fonts["ProggyClean"]
+                    local bounds
+                    -- Use modern TextBoundsParams if the exploit supports it, else use a fixed size
+                    if typeof(font) == "Font" then
+                        -- Fallback rough estimation since GetTextBoundsParams isn't supported in all executors
+                        bounds = Vector2.new(#bind_label.Text * 7, 12)
+                    else
+                        bounds = game:GetService("TextService"):GetTextSize(bind_label.Text, 12, Enum.Font.Code, Vector2.new(1000, 12))
+                    end
+                    
                     if bounds.X > max_width then
                         max_width = bounds.X
                     end
