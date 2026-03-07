@@ -227,8 +227,12 @@
             })
             
             fonts = {
-                ["TahomaBold"] = Font.new(ProggyTiny, Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-                ["ProggyClean"] = Font.new(ProggyClean, Enum.FontWeight.Regular, Enum.FontStyle.Normal);
+                ["TahomaBold"]  = Font.new(ProggyTiny, Enum.FontWeight.Regular, Enum.FontStyle.Normal),
+                ["ProggyClean"] = Font.new(ProggyClean, Enum.FontWeight.Regular, Enum.FontStyle.Normal),
+                ["Code"]        = Font.fromEnum(Enum.Font.Code),
+                ["Gotham"]      = Font.fromEnum(Enum.Font.Gotham),
+                ["Arial"]       = Font.fromEnum(Enum.Font.Arial),
+                ["Roboto"]      = Font.fromEnum(Enum.Font.Roboto)
             }
             library.fonts = fonts
         end
@@ -237,7 +241,7 @@
 
 -- Library functions 
     -- Misc functions
-        function library:tween(obj, properties) 
+        function library:tween(obj, properties)
             local tween = tween_service:Create(obj, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, false, 0), properties):Play()
                 
             return tween
@@ -2490,21 +2494,11 @@
                 section:button({name = "Delete", callback = function() delfile(library.directory .. "/configs/" .. flags["config_name_text"] .. ".cfg")  library:update_config_list() end})
 
                 local section = main:column({}):section({name = "Other", size = 1, default = true})
-                section:list({
-                    name = "Menu Font",
-                    items = {"ProggyClean", "TahomaBold"},
+                section:dropdown({
+                    name = "ESP Font",
+                    options = {"ProggyClean", "TahomaBold", "Code", "Gotham", "Arial", "Roboto"},
                     default = "ProggyClean",
-                    flag = "MenuFont",
-                    callback = function(val)
-                        local targetFont = library.fonts and library.fonts[val]
-                        if targetFont and library.gui then
-                            for _, v in ipairs(library.gui:GetDescendants()) do
-                                if v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("TextBox") then
-                                    v.FontFace = targetFont
-                                end
-                            end
-                        end
-                    end
+                    flag = "ESPFont"
                 })
                 section:keybind({name = "Menu bind", callback = function(bool) window.toggle_menu(bool) end, default = true})
                 section:colorpicker({name = "Gradient 1", callback = function(color)                    
