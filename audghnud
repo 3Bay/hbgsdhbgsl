@@ -2495,7 +2495,7 @@
 
                 local section = main:column({}):section({name = "Other", size = 1, default = true})
                 section:dropdown({
-                    name = "ESP Font",
+                    name = "Fonts",
                     items = {"ProggyClean", "TahomaBold", "Code", "Gotham", "Arial", "Roboto"},
                     default = "ProggyClean",
                     flag = "ESPFont"
