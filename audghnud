@@ -77,6 +77,7 @@
             players = {},
             player = {}, 
         },
+        active_keybinds = {},
         colorpicker_open = false; 
         gui; 
     }
@@ -886,28 +887,112 @@
             return setmetatable(cfg, library)
         end 
 
+        function library:keybinds_list(options)
+            local cfg = {
+                name = options.name or "Keybinds";
+            }
+            
+            -- Instances
+                local outline = library:create("Frame", {
+                    Parent = library.sgui;
+                    Position = dim2(0, 10, 0, 300); 
+                    BorderColor3 = rgb(0, 0, 0);
+                    Size = dim2(0, 150, 0, 24);
+                    BorderSizePixel = 0;
+                    AutomaticSize = Enum.AutomaticSize.Y;
+                    BackgroundColor3 = rgb(255, 255, 255);
+                    Visible = false;
+                }); library.keybinds_outline = outline; library:draggify(outline);
+                
+                local dark = library:create("Frame", {
+                    Parent = outline;
+                    BackgroundTransparency = 0.6;
+                    Position = dim2(0, 2, 0, 2);
+                    BorderColor3 = rgb(0, 0, 0);
+                    Size = dim2(1, -4, 1, -4);
+                    BorderSizePixel = 0;
+                    AutomaticSize = Enum.AutomaticSize.Y;
+                    BackgroundColor3 = rgb(0, 0, 0)
+                });
+
+                library:create("UIPadding", {
+                    PaddingTop = dim(0, 7);
+                    PaddingBottom = dim(0, 6);
+                    Parent = dark;
+                    PaddingRight = dim(0, 7);
+                    PaddingLeft = dim(0, 4)
+                });
+
+                library:create("UIListLayout", {
+                    Parent = dark;
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                    Padding = dim(0, 3);
+                });
+
+                local text_title = library:create("TextLabel", {
+                    FontFace = fonts["ProggyClean"];
+                    TextColor3 = rgb(255, 255, 255);
+                    BorderColor3 = rgb(0, 0, 0);
+                    Text = cfg.name;
+                    Parent = dark;
+                    Size = dim2(1, 0, 0, 12);
+                    BackgroundTransparency = 1;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    BorderSizePixel = 0;
+                    TextSize = 12;
+                    BackgroundColor3 = rgb(255, 255, 255)
+                }); 
+                
+                library.keybinds_gradient = library:create("UIGradient", {
+                    Color = rgbseq{
+                        rgbkey(0, themes.preset["1"]), 
+                        rgbkey(0.5, themes.preset["2"]),
+                        rgbkey(1, themes.preset["3"]),
+                    };
+                    Parent = outline
+                });
+            --
+
+            local keybind_labels = {}
+
+            function library:update_keybinds_list()
+                -- Clear existing labels
+                for _, label in ipairs(keybind_labels) do
+                    label:Destroy()
+                end
+                table.clear(keybind_labels)
+
+                -- Create new labels for active keybinds
+                for name, data in pairs(library.active_keybinds) do
+                    if data.active and data.key and tostring(data.key) ~= "..." then
+                        local text = string.format("[%s] %s: %s", data.key, name, string.lower(data.mode))
+                        
+                        local lbl = library:create("TextLabel", {
+                            FontFace = fonts["ProggyClean"];
+                            TextColor3 = rgb(255, 255, 255);
+                            BorderColor3 = rgb(0, 0, 0);
+                            Text = text;
+                            Parent = dark;
+                            Size = dim2(1, 0, 0, 12);
+                            BackgroundTransparency = 1;
+                            TextXAlignment = Enum.TextXAlignment.Left;
+                            BorderSizePixel = 0;
+                            TextSize = 11;
+                            BackgroundColor3 = rgb(255, 255, 255)
+                        });
+                        table.insert(keybind_labels, lbl)
+                    end
+                end
+            end
+
+            return setmetatable(cfg, library)
+        end 
+
         local watermark = library:watermark({name = "gerbilwtf - 100 fps - 100 ping"})
+        local default_keybinds = library:keybinds_list({})
         local fps = 0
         local watermark_delay = tick() 
 
-        run.RenderStepped:Connect(function()
-            fps += 1
-
-            if tick() - watermark_delay > 1 then 
-                watermark_delay = tick()
-                local ping = math.floor(stats.PerformanceStats.Ping:GetValue()) .. "ms"                
-                watermark.update_text(string.format("gerbil - fps: %s - ping: %s", fps, ping))
-                fps = 0
-            end
-        end)
-        
-        --[[
-        	local pingTimeSec = game.Players.LocalPlayer:GetNetworkPing()
-	local pingTimeMs = pingTimeSec * 1000
-	pingLabel.Text = "Ping: " .. tostring(math.floor(pingTimeMs)) .. "ms"
-
-	local realFPS = workspace:GetRealPhysicsFPS()
-	fpsLabel.Text = "FPS: " .. tostring(math.floor(realFPS))
         ]]
 
         function library:column(properties)
@@ -2356,10 +2441,14 @@
                         
                         text.Text = " ".. __text .." "
 
-                        -- if keybind_list_text then
-                        --     keybind_list_text.Text = "[ ".. __text  .." ] ".. cfg.name ..":".. string.lower(cfg.mode) .."";
-                        --     keybind_list_text.Visible = cfg.active
-                        -- end
+                        library.active_keybinds[cfg.name] = {
+                            key = __text,
+                            mode = cfg.mode,
+                            active = cfg.active
+                        }
+                        if library.update_keybinds_list then
+                            library:update_keybinds_list()
+                        end
                     end
 
                     function cfg.set_visible(bool)
@@ -2500,6 +2589,7 @@
                     default = "ProggyClean",
                     flag = "ESPFont"
                 })
+                section:toggle({name = "Keybinds List", callback = function(bool) if library.keybinds_outline then library.keybinds_outline.Visible = bool end end})
                 section:keybind({name = "Menu bind", callback = function(bool) window.toggle_menu(bool) end, default = true})
                 section:colorpicker({name = "Gradient 1", callback = function(color)                    
                     library:update_theme("1", color)
