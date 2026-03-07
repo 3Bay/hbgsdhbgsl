@@ -817,6 +817,146 @@
             end)
         end
         
+        function library:keybindslist(options)
+            local cfg = {
+                name = options.name or "Keybinds",
+                binds = {},
+            }
+            
+            -- Instances
+            local outline = library:create("Frame", {
+                Parent = library.sgui,
+                Position = dim2(0, 50, 0, 100), 
+                BorderColor3 = rgb(0, 0, 0),
+                Size = dim2(0, 150, 0, 24),
+                BorderSizePixel = 0,
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundColor3 = rgb(255, 255, 255),
+                Visible = false
+            })
+            library.keybinds_outline = outline
+            library:draggify(outline)
+            
+            local dark = library:create("Frame", {
+                Parent = outline,
+                BackgroundTransparency = 0.6,
+                Position = dim2(0, 2, 0, 2),
+                BorderColor3 = rgb(0, 0, 0),
+                Size = dim2(1, -4, 1, -4),
+                BorderSizePixel = 0,
+                BackgroundColor3 = rgb(0, 0, 0)
+            })
+
+            library:create("UIPadding", {
+                PaddingTop = dim(0, 7),
+                PaddingBottom = dim(0, 6),
+                Parent = dark,
+                PaddingRight = dim(0, 7),
+                PaddingLeft = dim(0, 4)
+            })
+            
+            local title_holder = library:create("Frame", {
+                Parent = dark,
+                BackgroundTransparency = 1,
+                Size = dim2(1, 0, 0, 12),
+                BorderSizePixel = 0,
+                BackgroundColor3 = rgb(0, 0, 0)
+            })
+
+            library:create("TextLabel", {
+                FontFace = fonts["ProggyClean"],
+                TextColor3 = rgb(255, 255, 255),
+                BorderColor3 = rgb(0, 0, 0),
+                Text = cfg.name,
+                Parent = title_holder,
+                Size = dim2(1, 0, 1, 0),
+                Position = dim2(0, 1, 0, -1),
+                BackgroundTransparency = 1,
+                TextXAlignment = Enum.TextXAlignment.Center,
+                BorderSizePixel = 0,
+                TextSize = 12,
+                BackgroundColor3 = rgb(255, 255, 255)
+            }) 
+
+            local line = library:create("Frame", {
+                Parent = dark,
+                BackgroundColor3 = rgb(255, 255, 255),
+                BorderSizePixel = 0,
+                Size = dim2(1, 0, 0, 1),
+                Position = dim2(0, 0, 0, 15)
+            })
+            
+            local list_container = library:create("Frame", {
+                Parent = dark,
+                BackgroundTransparency = 1,
+                Size = dim2(1, 0, 1, -18),
+                Position = dim2(0, 0, 0, 18),
+                BorderSizePixel = 0,
+                AutomaticSize = Enum.AutomaticSize.XY
+            })
+            
+            library:create("UIListLayout", {
+                Parent = list_container,
+                Padding = dim(0, 4),
+                SortOrder = Enum.SortOrder.LayoutOrder
+            })
+            
+            library.keybinds_gradient = library:create("UIGradient", {
+                Color = rgbseq{
+                    rgbkey(0, themes.preset["1"]), 
+                    rgbkey(0.5, themes.preset["2"]),
+                    rgbkey(1, themes.preset["3"]),
+                },
+                Parent = outline
+            })
+            
+            library:create("UIGradient", {
+                Color = rgbseq{
+                    rgbkey(0, themes.preset["1"]), 
+                    rgbkey(0.5, themes.preset["2"]),
+                    rgbkey(1, themes.preset["3"]),
+                },
+                Parent = line
+            })
+
+            function cfg.set_visible(bool)
+                outline.Visible = bool
+            end
+
+            function cfg.add_bind(id, text, state)
+                if not cfg.binds[id] then
+                    local bind_label = library:create("TextLabel", {
+                        FontFace = fonts["ProggyClean"],
+                        TextColor3 = rgb(255, 255, 255),
+                        BorderColor3 = rgb(0, 0, 0),
+                        Text = text .. ": " .. state,
+                        Parent = list_container,
+                        Size = dim2(1, 0, 0, 12),
+                        BackgroundTransparency = 1,
+                        TextXAlignment = Enum.TextXAlignment.Left,
+                        BorderSizePixel = 0,
+                        AutomaticSize = Enum.AutomaticSize.X,
+                        TextSize = 12,
+                        BackgroundColor3 = rgb(255, 255, 255)
+                    })
+                    cfg.binds[id] = bind_label
+                else
+                    cfg.binds[id].Text = text .. ": " .. state
+                end
+            end
+
+            function cfg.remove_bind(id)
+                if cfg.binds[id] then
+                    cfg.binds[id]:Destroy()
+                    cfg.binds[id] = nil
+                end
+            end
+
+            return setmetatable(cfg, library)
+        end
+        
+        library.keybinds_ui = library:keybindslist({name = "keybinds"})
+        
         function library:watermark(options)
             local cfg = {
                 name = options.name or "nebulahax";
@@ -2356,10 +2496,14 @@
                         
                         text.Text = " ".. __text .." "
 
-                        -- if keybind_list_text then
-                        --     keybind_list_text.Text = "[ ".. __text  .." ] ".. cfg.name ..":".. string.lower(cfg.mode) .."";
-                        --     keybind_list_text.Visible = cfg.active
-                        -- end
+                        if library.keybinds_ui then
+                            if cfg.active and cfg.mode ~= "Always" then
+                                local state_text = __text and ("[" .. __text .. "] ") or ""
+                                library.keybinds_ui.add_bind(cfg.flag, state_text .. cfg.name, string.lower(cfg.mode))
+                            else
+                                library.keybinds_ui.remove_bind(cfg.flag)
+                            end
+                        end
                     end
 
                     function cfg.set_visible(bool)
@@ -2501,6 +2645,7 @@
                     flag = "ESPFont"
                 })
                 section:keybind({name = "Menu bind", callback = function(bool) window.toggle_menu(bool) end, default = true})
+                section:toggle({name = "Keybinds list", callback = function(bool) library.keybinds_ui.set_visible(bool) end, default = false})
                 section:colorpicker({name = "Gradient 1", callback = function(color)                    
                     library:update_theme("1", color)
 
@@ -2511,6 +2656,12 @@
                     };
 
                     library.watermark_gradient.Color = rgbseq{
+                        rgbkey(0, themes.preset["1"]), 
+                        rgbkey(0.5, themes.preset["2"]),
+                        rgbkey(1, themes.preset["3"]),
+                    };
+
+                    library.keybinds_gradient.Color = rgbseq{
                         rgbkey(0, themes.preset["1"]), 
                         rgbkey(0.5, themes.preset["2"]),
                         rgbkey(1, themes.preset["3"]),
@@ -2530,6 +2681,12 @@
                         rgbkey(0.5, themes.preset["2"]),
                         rgbkey(1, themes.preset["3"]),
                     };
+
+                    library.keybinds_gradient.Color = rgbseq{
+                        rgbkey(0, themes.preset["1"]), 
+                        rgbkey(0.5, themes.preset["2"]),
+                        rgbkey(1, themes.preset["3"]),
+                    };
                 end, color = themes.preset["2"]})
                 section:colorpicker({name = "Gradient 3", callback = function(color)
                     library:update_theme("3", color)
@@ -2541,6 +2698,12 @@
                     };
 
                     library.watermark_gradient.Color = rgbseq{
+                        rgbkey(0, themes.preset["1"]), 
+                        rgbkey(0.5, themes.preset["2"]),
+                        rgbkey(1, themes.preset["3"]),
+                    };
+
+                    library.keybinds_gradient.Color = rgbseq{
                         rgbkey(0, themes.preset["1"]), 
                         rgbkey(0.5, themes.preset["2"]),
                         rgbkey(1, themes.preset["3"]),
