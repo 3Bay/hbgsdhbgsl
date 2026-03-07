@@ -993,6 +993,24 @@
         local fps = 0
         local watermark_delay = tick() 
 
+        run.RenderStepped:Connect(function()
+            fps += 1
+
+            if tick() - watermark_delay > 1 then 
+                watermark_delay = tick()
+                local ping = math.floor(stats.PerformanceStats.Ping:GetValue()) .. "ms"                
+                watermark.update_text(string.format("gerbil - fps: %s - ping: %s", fps, ping))
+                fps = 0
+            end
+        end)
+        
+        --[[
+        	local pingTimeSec = game.Players.LocalPlayer:GetNetworkPing()
+	local pingTimeMs = pingTimeSec * 1000
+	pingLabel.Text = "Ping: " .. tostring(math.floor(pingTimeMs)) .. "ms"
+
+	local realFPS = workspace:GetRealPhysicsFPS()
+	fpsLabel.Text = "FPS: " .. tostring(math.floor(realFPS))
         ]]
 
         function library:column(properties)
