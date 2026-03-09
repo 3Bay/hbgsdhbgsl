@@ -63,7 +63,7 @@
 
 -- Library init
     getgenv().library = {
-        directory = "gerbilwtf",
+        directory = "gerbilfallen",
         folders = {
             "/fonts",
             "/configs",
