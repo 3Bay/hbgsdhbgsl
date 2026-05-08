@@ -1303,6 +1303,7 @@
                         fill.BackgroundColor3 = bool and themes.preset[tostring(self.count)] or themes.preset.inline
 
                         flags[cfg.flag] = bool
+                        cfg.value = bool
 
                         cfg.callback(bool)
 
