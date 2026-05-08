@@ -1114,6 +1114,16 @@
                     BackgroundColor3 = themes.preset[tostring(self.count)]
                 }); library:apply_theme(accent, tostring(self.count), "BackgroundColor3");
 
+                cfg.set_visibility = function(self, element)
+                    local callback_ = element.callback
+                    element.callback = function(...)
+                        pcall(function()
+                            accent.Visible = element.value
+                        end)
+                        callback_(...)
+                    end
+                end
+
                 local dark = library:create("Frame", {
                     Parent = accent;
                     BackgroundTransparency = 0.6;
@@ -1206,6 +1216,16 @@
                             BorderSizePixel = 0;
                             BackgroundColor3 = rgb(255, 255, 255)
                         });
+
+                        cfg.set_visibility = function(self, element)
+                            local callback_ = element.callback
+                            element.callback = function(...)
+                                pcall(function()
+                                    toggle.Visible = element.value
+                                end)
+                                callback_(...)
+                            end
+                        end
                         
                         library:create("TextLabel", {
                             FontFace = fonts["ProggyClean"];
@@ -1330,6 +1350,16 @@
                         AutomaticSize = Enum.AutomaticSize.Y;
                         BackgroundColor3 = themes.preset[tostring(self.count)]
                     }); library:apply_theme(accent, tostring(self.count), "BackgroundColor3")
+
+                    cfg.set_visibility = function(self, element)
+                        local callback_ = element.callback
+                        element.callback = function(...)
+                            pcall(function()
+                                accent.Visible = element.value
+                            end)
+                            callback_(...)
+                        end
+                    end
                     
                     local inline = library:create("Frame", {
                         Parent = accent;
@@ -1459,6 +1489,8 @@
                     default = options.default or 10,
                     value = options.default or 10, 
 
+                    set_visibility = nil,
+
                     ignore = options.ignore or false, 
                     dragging = false,
                 } 
@@ -1472,6 +1504,16 @@
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
+
+                    cfg.set_visibility = function(self, element)
+                        local callback_ = element.callback
+                        element.callback = function(...)
+                            pcall(function()
+                                slider.Visible = element.value
+                            end)
+                            callback_(...)
+                        end
+                    end
                     
                     local eeeee = library:create("TextLabel", {
                         FontFace = fonts["ProggyClean"];
@@ -1598,6 +1640,16 @@
                             BorderSizePixel = 0;
                             BackgroundColor3 = rgb(255, 255, 255)
                         });
+
+                                        cfg.set_visibility = function(self, element)
+                    local callback_ = element.callback
+                    element.callback = function(...)
+                        pcall(function()
+                            dropdown.Visible = element.value
+                        end)
+                        callback_(...)
+                    end
+                end
                         
                         local dropdown_holder = library:create("TextButton", {
                             AnchorPoint = vec2(1, 0);
@@ -1833,6 +1885,16 @@
                             BorderSizePixel = 0;
                             BackgroundColor3 = rgb(255, 255, 255)
                         });
+
+                        cfg.set_visibility = function(self, element)
+                            local callback_ = element.callback
+                            element.callback = function(...)
+                                pcall(function()
+                                    colorpicker_element.Visible = element.value
+                                end)
+                                callback_(...)
+                            end
+                        end
                         
                         local accent = library:create("Frame", {
                             AnchorPoint = vec2(1, 0);
@@ -2233,6 +2295,16 @@
                         BorderSizePixel = 0;
                         BackgroundColor3 = themes.preset[tostring(self.count)]
                     }); library:apply_theme(frame, tostring(self.count), "BackgroundColor3")
+
+                    cfg.set_visibility = function(self, element)
+                        local callback_ = element.callback
+                        element.callback = function(...)
+                            pcall(function()
+                                frame.Visible = element.value
+                            end)
+                            callback_(...)
+                        end
+                    end
                     
                     local frame_inline = library:create("Frame", {
                         Parent = frame;
@@ -2316,6 +2388,16 @@
                             BorderSizePixel = 0;
                             BackgroundColor3 = rgb(255, 255, 255)
                         });
+
+                        cfg.set_visibility = function(self, element)
+                            local callback_ = element.callback
+                            element.callback = function(...)
+                                pcall(function()
+                                    keybind.Visible = element.value
+                                end)
+                                callback_(...)
+                            end
+                        end
                         
                         local keybind_holder = library:create("TextButton", {
                             AnchorPoint = vec2(1, 0);
@@ -2609,6 +2691,16 @@
                         BorderSizePixel = 0;
                         BackgroundColor3 = themes.preset[tostring(self.count)]
                     }); library:apply_theme(frame, tostring(self.count), "BackgroundColor3")
+
+                                            cfg.set_visibility = function(self, element)
+                            local callback_ = element.callback
+                            element.callback = function(...)
+                                pcall(function()
+                                    frame.Visible = element.value
+                                end)
+                                callback_(...)
+                            end
+                        end
                     
                     local frame_inline = library:create("Frame", {
                         Parent = frame;
